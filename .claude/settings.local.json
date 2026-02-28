@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(node --version)",
+      "Bash(npx --version)",
+      "Bash(where python3)",
+      "Bash(where py)",
+      "Bash(where python)",
+      "Bash(\"C:/Users/alexk/OneDrive/Desktop/claude/pinball1/index.html\":*)",
+      "Bash(\"C:/Users/alexk/OneDrive/Desktop/claude/pinball1/app.js\":*)",
+      "Bash(git init)",
+      "Bash(git add index.html style.css app.js docs/)",
+      "Bash(git commit -m \"feat: project scaffold\")",
+      "Bash(git config user.email \"alexk@example.com\")",
+      "Bash(git config user.name \"alexk\")"
+    ]
+  }
+}
