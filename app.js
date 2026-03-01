@@ -48,6 +48,70 @@ function mmssToSeconds(str) {
 let state = loadState();
 let sessionState = null;
 
+function playBeep() {
+  // implemented in Task 7
+}
+
+let timerInterval = null;
+
+function clearTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+}
+
+function startTimer() {
+  clearTimer();
+  timerInterval = setInterval(() => {
+    if (sessionState.secondsRemaining <= 0) {
+      clearTimer();
+      onTimeboxEnd();
+      return;
+    }
+    sessionState.secondsRemaining--;
+    const el = document.querySelector('.countdown');
+    if (el) el.textContent = secondsToMMSS(sessionState.secondsRemaining);
+    const pp = document.getElementById('playpause-btn');
+    if (pp) pp.textContent = 'Pause';
+  }, 1000);
+  sessionState.isRunning = true;
+}
+
+function pauseTimer() {
+  clearTimer();
+  sessionState.isRunning = false;
+  const pp = document.getElementById('playpause-btn');
+  if (pp) pp.textContent = 'Play';
+}
+
+function onTimeboxEnd() {
+  playBeep();
+  const next = sessionState.currentIndex + 1;
+  if (next >= state.timeboxes.length) {
+    sessionState.complete = true;
+    sessionState.isRunning = false;
+    render();
+    return;
+  }
+  if (state.autoAdvance) {
+    setTimeout(() => {
+      advanceTo(next);
+    }, 1000);
+  } else {
+    sessionState.currentIndex = next;
+    sessionState.secondsRemaining = state.timeboxes[next].duration;
+    sessionState.isRunning = false;
+    render();
+  }
+}
+
+function advanceTo(index) {
+  sessionState.currentIndex = index;
+  sessionState.secondsRemaining = state.timeboxes[index].duration;
+  sessionState.isRunning = false;
+  render();
+  startTimer();
+}
+
 function render() {
   const app = document.getElementById('app');
   if (sessionState) {
@@ -200,7 +264,43 @@ function attachEditListeners() {
 }
 
 function attachRunListeners() {
-  // filled in Task 6
+  document.getElementById('edit-btn')?.addEventListener('click', () => {
+    clearTimer();
+    sessionState = null;
+    render();
+  });
+
+  document.getElementById('playpause-btn')?.addEventListener('click', () => {
+    if (sessionState.isRunning) {
+      pauseTimer();
+    } else {
+      startTimer();
+    }
+  });
+
+  document.getElementById('skip-btn')?.addEventListener('click', () => {
+    clearTimer();
+    const next = sessionState.currentIndex + 1;
+    if (next >= state.timeboxes.length) {
+      sessionState.complete = true;
+      sessionState.isRunning = false;
+      render();
+    } else {
+      advanceTo(next);
+      pauseTimer();
+    }
+  });
+
+  document.getElementById('reset-btn')?.addEventListener('click', () => {
+    clearTimer();
+    sessionState = { currentIndex: 0, secondsRemaining: state.timeboxes[0].duration, isRunning: false };
+    render();
+  });
+
+  document.getElementById('auto-advance')?.addEventListener('change', e => {
+    state.autoAdvance = e.target.checked;
+    saveState(state);
+  });
 }
 
 render();
