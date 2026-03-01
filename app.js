@@ -89,7 +89,7 @@ function renderTimeboxRow(tb, index) {
 }
 
 function renderRunView() {
-  const tb = state.timeboxes[sessionState.currentIndex];
+  const tb = state.timeboxes[sessionState.currentIndex] || { name: '', duration: 0 };
   const isComplete = sessionState.complete;
   return `
     <div class="view run-view">
