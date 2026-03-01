@@ -243,6 +243,9 @@ function attachEditListeners() {
       } else {
         e.target.value = secondsToMMSS(tb.duration);
       }
+      const hasValid = state.timeboxes.some(t => t.duration > 0);
+      const startBtn = document.getElementById('start-btn');
+      if (startBtn) startBtn.disabled = state.timeboxes.length === 0 || !hasValid;
     });
   });
 
