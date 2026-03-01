@@ -89,7 +89,34 @@ function renderTimeboxRow(tb, index) {
 }
 
 function renderRunView() {
-  return `<div class="view run-view"><p>Run view placeholder</p></div>`;
+  const tb = state.timeboxes[sessionState.currentIndex];
+  const isComplete = sessionState.complete;
+  return `
+    <div class="view run-view">
+      <button class="btn-link" id="edit-btn">← Edit</button>
+      ${isComplete ? `
+        <div class="complete-state">
+          <p class="complete-label">Session complete!</p>
+          <button class="btn btn-primary" id="reset-btn">Reset</button>
+        </div>
+      ` : `
+        <p class="tb-label">${escapeHtml(tb.name || 'Untitled')}</p>
+        <div class="countdown">${secondsToMMSS(sessionState.secondsRemaining)}</div>
+        <p class="progress">${sessionState.currentIndex + 1} / ${state.timeboxes.length}</p>
+        <div class="run-controls">
+          <button class="btn btn-primary" id="playpause-btn">
+            ${sessionState.isRunning ? 'Pause' : 'Play'}
+          </button>
+          <button class="btn btn-secondary" id="skip-btn">Skip →</button>
+          <button class="btn btn-secondary" id="reset-btn">Reset</button>
+        </div>
+        <label class="auto-advance-toggle">
+          <input type="checkbox" id="auto-advance" ${state.autoAdvance ? 'checked' : ''} />
+          Auto-advance
+        </label>
+      `}
+    </div>
+  `;
 }
 
 function attachListeners() {
