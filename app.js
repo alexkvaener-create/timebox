@@ -78,12 +78,12 @@ function renderEditView() {
 
 function renderTimeboxRow(tb, index) {
   return `
-    <li class="timebox-row" data-id="${tb.id}">
-      <input class="tb-name" type="text" value="${escapeHtml(tb.name)}" placeholder="Task name" data-id="${tb.id}" />
-      <input class="tb-duration" type="text" value="${secondsToMMSS(tb.duration)}" placeholder="MM:SS" data-id="${tb.id}" />
+    <li class="timebox-row" data-id="${escapeHtml(tb.id)}">
+      <input class="tb-name" type="text" value="${escapeHtml(tb.name)}" placeholder="Task name" data-id="${escapeHtml(tb.id)}" />
+      <input class="tb-duration" type="text" value="${secondsToMMSS(tb.duration)}" placeholder="MM:SS" data-id="${escapeHtml(tb.id)}" />
       <button class="btn-icon" data-action="up" data-index="${index}">↑</button>
       <button class="btn-icon" data-action="down" data-index="${index}">↓</button>
-      <button class="btn-icon btn-danger" data-action="delete" data-id="${tb.id}">✕</button>
+      <button class="btn-icon btn-danger" data-action="delete" data-id="${escapeHtml(tb.id)}">✕</button>
     </li>
   `;
 }
