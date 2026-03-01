@@ -70,8 +70,6 @@ function startTimer() {
     sessionState.secondsRemaining--;
     const el = document.querySelector('.countdown');
     if (el) el.textContent = secondsToMMSS(sessionState.secondsRemaining);
-    const pp = document.getElementById('playpause-btn');
-    if (pp) pp.textContent = 'Pause';
   }, 1000);
   sessionState.isRunning = true;
 }
@@ -93,6 +91,7 @@ function onTimeboxEnd() {
     return;
   }
   if (state.autoAdvance) {
+    sessionState.isRunning = false;
     setTimeout(() => {
       advanceTo(next);
     }, 1000);
@@ -286,8 +285,10 @@ function attachRunListeners() {
       sessionState.isRunning = false;
       render();
     } else {
-      advanceTo(next);
-      pauseTimer();
+      sessionState.currentIndex = next;
+      sessionState.secondsRemaining = state.timeboxes[next].duration;
+      sessionState.isRunning = false;
+      render();
     }
   });
 
