@@ -93,7 +93,87 @@ function renderRunView() {
 }
 
 function attachListeners() {
-  // filled in Task 4
+  if (!sessionState) {
+    attachEditListeners();
+  } else {
+    attachRunListeners();
+  }
+}
+
+function attachEditListeners() {
+  document.getElementById('add-btn')?.addEventListener('click', () => {
+    state.timeboxes.push({ id: generateId(), name: '', duration: 1500 });
+    saveState(state);
+    render();
+    const inputs = document.querySelectorAll('.tb-name');
+    inputs[inputs.length - 1]?.focus();
+  });
+
+  document.getElementById('start-btn')?.addEventListener('click', () => {
+    if (state.timeboxes.length === 0) return;
+    sessionState = { currentIndex: 0, secondsRemaining: state.timeboxes[0].duration, isRunning: false };
+    render();
+  });
+
+  document.querySelectorAll('.tb-name').forEach(input => {
+    input.addEventListener('input', e => {
+      const id = e.target.dataset.id;
+      const tb = state.timeboxes.find(t => t.id === id);
+      if (tb) { tb.name = e.target.value; saveState(state); }
+      const hasValid = state.timeboxes.some(t => t.duration > 0);
+      const startBtn = document.getElementById('start-btn');
+      if (startBtn) startBtn.disabled = state.timeboxes.length === 0 || !hasValid;
+    });
+  });
+
+  document.querySelectorAll('.tb-duration').forEach(input => {
+    input.addEventListener('change', e => {
+      const id = e.target.dataset.id;
+      const tb = state.timeboxes.find(t => t.id === id);
+      if (!tb) return;
+      const secs = mmssToSeconds(e.target.value);
+      if (secs !== null && secs > 0) {
+        tb.duration = secs;
+        saveState(state);
+        e.target.value = secondsToMMSS(secs);
+      } else {
+        e.target.value = secondsToMMSS(tb.duration);
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-action="delete"]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id = e.target.dataset.id;
+      state.timeboxes = state.timeboxes.filter(t => t.id !== id);
+      saveState(state);
+      render();
+    });
+  });
+
+  document.querySelectorAll('[data-action="up"]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const i = parseInt(e.target.dataset.index, 10);
+      if (i === 0) return;
+      [state.timeboxes[i - 1], state.timeboxes[i]] = [state.timeboxes[i], state.timeboxes[i - 1]];
+      saveState(state);
+      render();
+    });
+  });
+
+  document.querySelectorAll('[data-action="down"]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const i = parseInt(e.target.dataset.index, 10);
+      if (i === state.timeboxes.length - 1) return;
+      [state.timeboxes[i], state.timeboxes[i + 1]] = [state.timeboxes[i + 1], state.timeboxes[i]];
+      saveState(state);
+      render();
+    });
+  });
+}
+
+function attachRunListeners() {
+  // filled in Task 6
 }
 
 render();
