@@ -145,8 +145,8 @@ function renderEditView() {
           ? '<li class="empty-hint">No timeboxes yet. Add one below.</li>'
           : state.timeboxes.map((tb, i) => renderTimeboxRow(tb, i)).join('')}
       </ul>
-      <button class="btn btn-secondary" id="add-btn">+ Add timebox</button>
-      <button class="btn btn-primary" id="start-btn" ${(state.timeboxes.length === 0 || !hasValid) ? 'disabled' : ''}>
+      <button type="button" class="btn btn-secondary" id="add-btn">+ Add timebox</button>
+      <button type="button" class="btn btn-primary" id="start-btn" ${(state.timeboxes.length === 0 || !hasValid) ? 'disabled' : ''}>
         Start Session
       </button>
     </div>
@@ -158,9 +158,9 @@ function renderTimeboxRow(tb, index) {
     <li class="timebox-row" data-id="${escapeHtml(tb.id)}">
       <input class="tb-name" type="text" value="${escapeHtml(tb.name)}" placeholder="Task name" data-id="${escapeHtml(tb.id)}" />
       <input class="tb-duration" type="text" value="${secondsToMMSS(tb.duration)}" placeholder="MM:SS" data-id="${escapeHtml(tb.id)}" />
-      <button class="btn-icon" data-action="up" data-index="${index}">↑</button>
-      <button class="btn-icon" data-action="down" data-index="${index}">↓</button>
-      <button class="btn-icon btn-danger" data-action="delete" data-id="${escapeHtml(tb.id)}">✕</button>
+      <button type="button" class="btn-icon" data-action="up" data-index="${index}">↑</button>
+      <button type="button" class="btn-icon" data-action="down" data-index="${index}">↓</button>
+      <button type="button" class="btn-icon btn-danger" data-action="delete" data-id="${escapeHtml(tb.id)}">✕</button>
     </li>
   `;
 }
@@ -170,22 +170,22 @@ function renderRunView() {
   const isComplete = sessionState.complete;
   return `
     <div class="view run-view">
-      <button class="btn-link" id="edit-btn">← Edit</button>
+      <button type="button" class="btn-link" id="edit-btn">← Edit</button>
       ${isComplete ? `
         <div class="complete-state">
           <p class="complete-label">Session complete!</p>
-          <button class="btn btn-primary" id="reset-btn">Reset</button>
+          <button type="button" class="btn btn-primary" id="reset-btn">Reset</button>
         </div>
       ` : `
         <p class="tb-label">${escapeHtml(tb.name || 'Untitled')}</p>
         <div class="countdown">${secondsToMMSS(sessionState.secondsRemaining)}</div>
         <p class="progress">${sessionState.currentIndex + 1} / ${state.timeboxes.length}</p>
         <div class="run-controls">
-          <button class="btn btn-primary" id="playpause-btn">
+          <button type="button" class="btn btn-primary" id="playpause-btn">
             ${sessionState.isRunning ? 'Pause' : 'Play'}
           </button>
-          <button class="btn btn-secondary" id="skip-btn">Skip →</button>
-          <button class="btn btn-secondary" id="reset-btn">Reset</button>
+          <button type="button" class="btn btn-secondary" id="skip-btn">Skip →</button>
+          <button type="button" class="btn btn-secondary" id="reset-btn">Reset</button>
         </div>
         <label class="auto-advance-toggle">
           <input type="checkbox" id="auto-advance" ${state.autoAdvance ? 'checked' : ''} />
