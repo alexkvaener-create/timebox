@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  # ---- PostgreSQL ----
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     meditrack
+      POSTGRES_PASSWORD: meditrack
+      POSTGRES_DB:       meditrack_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meditrack -d meditrack_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---- FastAPI Backend ----
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://meditrack:meditrack@db:5432/meditrack_db
+      SECRET_KEY:   change_me_in_production
+      DEBUG:        "true"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+
+  # ---- Next.js Frontend ----
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
