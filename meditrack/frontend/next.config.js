@@ -1,7 +1,5 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
-  // Proxy /api/* requests to the FastAPI backend during development
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   async rewrites() {
     return [
       {
@@ -12,4 +10,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

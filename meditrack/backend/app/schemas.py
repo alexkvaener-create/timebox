@@ -100,7 +100,7 @@ class AdmissionBase(BaseSchema):
 
 
 class AdmissionCreate(AdmissionBase):
-    patient_id: uuid.UUID
+    pass
 
 
 class AdmissionResponse(AdmissionBase):

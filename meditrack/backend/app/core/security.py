@@ -12,8 +12,8 @@ from typing import Optional
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+import bcrypt as _bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
@@ -21,18 +21,16 @@ from app.db.session import get_db
 
 settings = get_settings()
 
-# ---- Password hashing ----
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+# ---- Password hashing (using bcrypt directly to avoid passlib compat issues) ----
 bearer_scheme = HTTPBearer()
 
 
 def hash_password(plain_password: str) -> str:
-    return pwd_context.hash(plain_password)
+    return _bcrypt.hashpw(plain_password.encode(), _bcrypt.gensalt(12)).decode()
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    return _bcrypt.checkpw(plain_password.encode(), hashed_password.encode())
 
 
 # ---- JWT Tokens ----
