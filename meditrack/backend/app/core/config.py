@@ -17,7 +17,8 @@ class Settings(BaseSettings):
     DEBUG: bool = False
 
     # ---- Database ----
-    DATABASE_URL: str = "postgresql+asyncpg://meditrack:meditrack@localhost:5432/meditrack_db"
+    # Defaults to SQLite for desktop/offline use; override with postgresql+asyncpg:// for production
+    DATABASE_URL: str = "sqlite+aiosqlite:///./meditrack.db"
 
     # ---- Security ----
     SECRET_KEY: str = "CHANGE_ME_IN_PRODUCTION_USE_32_CHAR_MIN_SECRET"

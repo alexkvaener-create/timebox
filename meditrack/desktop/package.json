@@ -1,0 +1,40 @@
+{
+  "name": "meditrack-desktop",
+  "version": "0.1.0",
+  "description": "MediTrack CDSS - Desktop App",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.meditrack.cdss",
+    "productName": "MediTrack CDSS",
+    "directories": { "output": "dist" },
+    "files": ["main.js", "preload.js", "assets/**"],
+    "extraResources": [
+      { "from": "../backend", "to": "backend", "filter": ["**/*", "!venv", "!__pycache__", "!*.pyc"] },
+      { "from": "../frontend/.next", "to": "frontend/.next" },
+      { "from": "../frontend/public", "to": "frontend/public" },
+      { "from": "../frontend/package.json", "to": "frontend/package.json" }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}

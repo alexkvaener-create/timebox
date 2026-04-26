@@ -11,12 +11,15 @@ from app.core.config import get_settings
 
 settings = get_settings()
 
+_is_sqlite = settings.DATABASE_URL.startswith("sqlite")
+
 engine = create_async_engine(
     settings.DATABASE_URL,
-    echo=settings.DEBUG,        # Log SQL in DEBUG mode
-    pool_pre_ping=True,         # Detect stale connections
-    pool_size=10,
-    max_overflow=20,
+    echo=settings.DEBUG,
+    # SQLite doesn't support pool_size/max_overflow or pool_pre_ping
+    **({} if _is_sqlite else {"pool_pre_ping": True, "pool_size": 10, "max_overflow": 20}),
+    # SQLite requires check_same_thread=False when used with async
+    connect_args={"check_same_thread": False} if _is_sqlite else {},
 )
 
 AsyncSessionFactory = async_sessionmaker(
