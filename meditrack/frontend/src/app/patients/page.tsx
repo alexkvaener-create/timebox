@@ -32,7 +32,7 @@ export default function PatientRosterPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <TopBar title="Patient Roster" subtitle="Active ward admissions" ward="4A" />
+      <TopBar title="Patient Roster" subtitle="Active ward admissions" ward="4A" backHref="/dashboard" backLabel="Dashboard" />
 
       <div className="flex-1 p-6">
         {/* Filters */}
