@@ -1,17 +1,34 @@
 'use client';
 
+import Link from 'next/link';
+
 interface TopBarProps {
   title: string;
   subtitle?: string;
   ward?: string;
+  backHref?: string;
+  backLabel?: string;
 }
 
-export default function TopBar({ title, subtitle, ward }: TopBarProps) {
+export default function TopBar({ title, subtitle, ward, backHref, backLabel = 'Back' }: TopBarProps) {
   return (
     <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
-      <div>
-        <h1 className="text-base font-semibold text-slate-800">{title}</h1>
-        {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+      <div className="flex items-center gap-3">
+        {backHref && (
+          <Link
+            href={backHref}
+            className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium mr-1"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            {backLabel}
+          </Link>
+        )}
+        <div>
+          <h1 className="text-base font-semibold text-slate-800">{title}</h1>
+          {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+        </div>
       </div>
       <div className="flex items-center gap-3">
         {ward && (

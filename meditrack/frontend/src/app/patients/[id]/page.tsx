@@ -80,6 +80,8 @@ export default function PatientDetailPage() {
         title={patient.full_name}
         subtitle={`MRN: ${patient.mrn} · ${calculateAge(patient.date_of_birth)} yrs · ${titleCase(patient.gender ?? 'unknown')}`}
         ward={adm?.ward}
+        backHref="/dashboard"
+        backLabel="Patient Roster"
       />
 
       <div className="flex-1 p-6 grid grid-cols-3 gap-5 overflow-auto">
