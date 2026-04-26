@@ -1,7 +1,7 @@
 """
 MediTrack CDSS - SQLAlchemy ORM Models
 
-Declarative models that map directly to the PostgreSQL schema defined in init.sql.
+Declarative models using cross-database types (SQLite + PostgreSQL compatible).
 """
 from __future__ import annotations
 
@@ -10,9 +10,8 @@ from datetime import datetime
 
 from sqlalchemy import (
     Boolean, Column, Date, DateTime, Float, ForeignKey,
-    Integer, String, Text, ARRAY, func,
+    Integer, JSON, String, Text, Uuid, func,
 )
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import DeclarativeBase, relationship
 
 
@@ -24,7 +23,7 @@ class Base(DeclarativeBase):
 class User(Base):
     __tablename__ = "users"
 
-    id             = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id             = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email          = Column(String(255), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
     full_name      = Column(String(255), nullable=False)
@@ -44,13 +43,13 @@ class User(Base):
 class Patient(Base):
     __tablename__ = "patients"
 
-    id             = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id             = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
     mrn            = Column(String(50), unique=True, nullable=False, index=True)
     full_name      = Column(String(255), nullable=False)
     date_of_birth  = Column(Date, nullable=False)
     gender         = Column(String(20), nullable=True)
     blood_type     = Column(String(5), nullable=True)
-    allergies      = Column(ARRAY(String), nullable=True, default=list)
+    allergies      = Column(JSON, nullable=True, default=list)
     created_at     = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at     = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
@@ -63,9 +62,9 @@ class Patient(Base):
 class Admission(Base):
     __tablename__ = "admissions"
 
-    id                  = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    patient_id          = Column(UUID(as_uuid=True), ForeignKey("patients.id", ondelete="CASCADE"), nullable=False, index=True)
-    attending_id        = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    id                  = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    patient_id          = Column(Uuid(as_uuid=True), ForeignKey("patients.id", ondelete="CASCADE"), nullable=False, index=True)
+    attending_id        = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=False)
     ward                = Column(String(100), nullable=False, index=True)
     bed_number          = Column(String(20), nullable=True)
     admission_reason    = Column(Text, nullable=False)
@@ -87,10 +86,10 @@ class Admission(Base):
 class ClinicalObservation(Base):
     __tablename__ = "clinical_observations"
 
-    id                       = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    admission_id             = Column(UUID(as_uuid=True), ForeignKey("admissions.id", ondelete="CASCADE"), nullable=False, index=True)
-    patient_id               = Column(UUID(as_uuid=True), ForeignKey("patients.id", ondelete="CASCADE"), nullable=False, index=True)
-    recorded_by              = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    id                       = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    admission_id             = Column(Uuid(as_uuid=True), ForeignKey("admissions.id", ondelete="CASCADE"), nullable=False, index=True)
+    patient_id               = Column(Uuid(as_uuid=True), ForeignKey("patients.id", ondelete="CASCADE"), nullable=False, index=True)
+    recorded_by              = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=False)
     observation_type         = Column(String(50), nullable=False)
     # Vital signs
     heart_rate               = Column(Integer, nullable=True)
@@ -118,17 +117,17 @@ class ClinicalObservation(Base):
 class ActionLog(Base):
     __tablename__ = "action_logs"
 
-    id               = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    admission_id     = Column(UUID(as_uuid=True), ForeignKey("admissions.id", ondelete="CASCADE"), nullable=False, index=True)
-    patient_id       = Column(UUID(as_uuid=True), ForeignKey("patients.id", ondelete="CASCADE"), nullable=False, index=True)
-    triggered_by     = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    id               = Column(Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    admission_id     = Column(Uuid(as_uuid=True), ForeignKey("admissions.id", ondelete="CASCADE"), nullable=False, index=True)
+    patient_id       = Column(Uuid(as_uuid=True), ForeignKey("patients.id", ondelete="CASCADE"), nullable=False, index=True)
+    triggered_by     = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=True)
     suggestion_id    = Column(String(100), nullable=True)
     suggested_action = Column(Text, nullable=False)
     action_type      = Column(String(100), nullable=False)
     rationale        = Column(Text, nullable=True)
     decision         = Column(String(50), nullable=True, index=True)
     physician_note   = Column(Text, nullable=True)
-    decided_by       = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    decided_by       = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=True)
     decided_at       = Column(DateTime(timezone=True), nullable=True)
     created_at       = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
